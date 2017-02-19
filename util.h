@@ -1,0 +1,23 @@
+#ifndef _UTIL_H
+#define _UTIL_H
+
+#define PLAYERHEIGHT .4
+#define HALLWIDTH 10
+#define WALLWIDTH 1
+#define WALLHEIGHT 6
+#define COMBINEDWIDTH 11
+#define TOTALGRIDSIZE 67
+
+#define MILLISECONDS_BETWEEN_STEPS 17
+
+#define TOPX 1023
+#define TOPY 767
+
+#define SMALLMAPSIZE 201
+#define SMALLMAPX TOPY - 10 - SMALLMAPSIZE
+#define SMALLMAPY TOPX - 10 - SMALLMAPSIZE
+
+int WALLS[60];
+
+
+#endif //_UTIL_H
