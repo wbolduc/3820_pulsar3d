@@ -22,4 +22,4 @@ map: map.c graphics.h projectiles.h
 	gcc -c map.c graphics.h projectiles.h $(INCLUDES)
 
 clean:
-	rm a1 a1.o graphics.o visible.o projectiles.o
+	rm a1 a1.o graphics.o visible.o projectiles.o map.o
