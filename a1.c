@@ -11,10 +11,15 @@
 #include <string.h>
 #include <math.h>
 
+#include "mobs.h"
 #include "graphics.h"
 #include "projectiles.h"
 #include "map.h"
 #include "util.h"
+
+vMOB* roller1;
+extern vMOB * createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount);
+extern void drawNextvMobFrame(vMOB* mob);
 
 
 	/* mouse function called by GLUT when a button is pressed or released */
@@ -102,13 +107,13 @@ void collisionResponse() {
 	goodY = y;
 	goodZ = z;
 
-	printf("%f,%f,%f -> %f,%f,%f\n", oldX, oldY, oldZ, x,y,z);
-	printf("%d,%d,%d -> %d,%d,%d\n\n", -(int)(oldX),-(int)(oldY),-(int)(oldZ),-(int)(x),-(int)(y),-(int)(z));
+	//printf("%f,%f,%f -> %f,%f,%f\n", oldX, oldY, oldZ, x,y,z);
+	//printf("%d,%d,%d -> %d,%d,%d\n\n", -(int)(oldX),-(int)(oldY),-(int)(oldZ),-(int)(x),-(int)(y),-(int)(z));
 
 	//check world bounds
 	if (-(int)y > WORLDY || -(int)y < 0 || -(int)x > WORLDX || -(int)x < 0 || -(int)z > WORLDZ || -(int)z < 0)
 	{
-		printf("would go out of world\n");
+		//printf("would go out of world\n");
 		setViewPosition(oldX, oldY, oldZ);
 		return;
 	}
@@ -117,7 +122,7 @@ void collisionResponse() {
 	if(world[-(int)oldX][-(int)y][-(int)oldZ] != 0)
 	{
 		goodY = oldY;
-		printf("bad new Y\n");
+		//printf("bad new Y\n");
 	}
 
 	// horizontal
@@ -125,7 +130,7 @@ void collisionResponse() {
 	{
 		goodX = oldX;
 		wallBump = 1;
-		printf("bad new X\n");
+		//printf("bad new X\n");
 	}
 
 	// depth
@@ -133,7 +138,7 @@ void collisionResponse() {
 	{
 		goodZ = oldZ;
 		wallBump = 1;
-		printf("bad new Z\n");
+		//printf("bad new Z\n");
 	}
 
 	//TODO: walking into outward facing corners actually lifts you up the wall
@@ -676,6 +681,14 @@ float *la;
 			moveWall();
 			wallPushingPlayer();
 			animateProjectiles();
+
+			if(canSeePlayer(roller1))
+				printf("I CAN SEE YOU\n");
+			else
+				printf("where are you...\n");
+
+			drawNextvMobFrame(roller1);
+
 		}
 
    }
@@ -768,6 +781,8 @@ int i, j, k;
 		buildSkeletonWorld();
 		setViewPosition(-1.0,-20.0,-1.0);
 
+		roller1 = createvMob(10,10,10,3,3,3, redMob, 4);
+
 		//init the time in stepsSinceLastUpdate
 		stepsSinceLastUpdate();
    }
@@ -793,5 +808,7 @@ int i, j, k;
 	/* starts the graphics processing loop */
 	/* code after this will not run until the program exits */
    glutMainLoop();
+
+	free(roller1);
    return 0;
 }
