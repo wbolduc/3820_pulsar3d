@@ -17,16 +17,17 @@ typedef struct PROJECTILE{
 	float y;
 	float z;
 
-	float xAxis;
-	float yAxis;
-	float zAxis;
+	float ux;
+	float uy;
+	float uz;
 }PROJECTILE;
 
 PROJECTILE pList [MAXPROJECTILES];
 static int currentProjectiles = 0;
 
 //0 if cannot add projectile
-int addProjectile(float x, float y, float z, float xAxis, float yAxis, float zAxis);
+int addEulerProjectile(float x, float y, float z, float xAxis, float yAxis, float zAxis);
+int addUnitProjectile(float x, float y, float z, float ux, float uy, float uz);
 
 void removeProjectile(int projectileToRemove);
 

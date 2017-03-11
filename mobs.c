@@ -8,7 +8,53 @@ extern void getViewPosition(float *x, float *y, float *z);
 extern void showMob(int number);
 extern void setMobPosition(int number, float x, float y, float z, float mobroty);
 
-vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount)
+void updatevMob(vMOB * mob)
+{
+	static int frame = 0;
+	static int bulletReload = 0;
+	float px, py, pz, ux, uy, uz, mx, my, mz;
+	float dist;
+	float mobGirth = 3;
+
+	//shoot the player
+	if (bulletReload == mob->reload)
+	{
+		bulletReload = 0;
+	}
+	else if (bulletReload != 0)
+	{
+		bulletReload++;
+	}
+	else if (canSeePlayer(mob))
+	{
+		printf("PEW %d\n", frame);
+		bulletReload++;
+
+		getViewPosition(&px, &py, &pz);
+		px = -px;
+		py = -py;
+		pz = -pz;
+		mx = (float)(mob->xEye + mob->x) + .5;
+		my = (float)(mob->yEye + mob->y) + .5;
+		mz = (float)(mob->zEye + mob->z) + .5;
+
+		dist = distance(px,py,pz, mx,my,mz);
+
+		//mob to player
+		ux = (px - mx) / dist;
+		uy = (py - my) / dist;
+		uz = (pz - mz) / dist;
+		addUnitProjectile(ux * mobGirth + mx, uy * mobGirth + my, uz * mobGirth + mz, ux, uy, uz);
+	}
+
+	if (frame++ == mob->frameTime)
+	{
+		drawNextvMobFrame(mob);
+		frame = 0;
+	}
+}
+
+vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload)
 {
 	vMOB* newMob = malloc(sizeof(vMOB));
 
@@ -27,6 +73,10 @@ vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char ****
 	newMob->animation = mobAnimation;
 	newMob->frameCount = frameCount;
 	newMob->currentFrame = 0;
+	newMob->frameTime = frameTime;
+
+	newMob->reload = reload;
+
 	return newMob;
 }
 
@@ -78,12 +128,12 @@ int canSeePlayer(vMOB* mob)
 
 	//initialize the coords
 	getViewPosition(&px, &py, &pz);
-	px = -px + .5;
-	py = -py + .5;
-	pz = -pz + .5;
-	mx = (float)(mob->xEye + mob->x);
-	my = (float)(mob->yEye + mob->y);
-	mz = (float)(mob->zEye + mob->z);
+	px = -px;
+	py = -py;
+	pz = -pz;
+	mx = (float)(mob->xEye + mob->x) + .5;
+	my = (float)(mob->yEye + mob->y) + .5;
+	mz = (float)(mob->zEye + mob->z) + .5;
 
 	dist = distance(px,py,pz, mx,my,mz);
 
@@ -91,8 +141,8 @@ int canSeePlayer(vMOB* mob)
 	ux = (px - mx) / dist;
 	uy = (py - my) / dist;
 	uz = (pz - mz) / dist;
-	printf("player = %f, %f, %f\n", px,py,pz);
-	printf("mob    = %f, %f, %f\n", mx,my,mz);
+	//printf("player = %f, %f, %f\n", px,py,pz);
+	//printf("mob    = %f, %f, %f\n", mx,my,mz);
 
 	for (dist; dist > mobBody; dist -= LOS_GRANULARITY)
 	{

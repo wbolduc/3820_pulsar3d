@@ -7,16 +7,34 @@ extern void setMobPosition(int number, float x, float y, float z, float mobroty)
 extern void hideMob(int number);
 extern void showMob(int number);
 //0 if cannot add projectile
-int addProjectile(float x, float y, float z, float xAxis, float yAxis, float zAxis)
+int addEulerProjectile(float x, float y, float z, float xAxis, float yAxis, float zAxis)
 {
 	if (currentProjectiles < MAXPROJECTILES)
 	{
 		pList[currentProjectiles].x = -x;
 		pList[currentProjectiles].y = -y;
 		pList[currentProjectiles].z = -z;
-		pList[currentProjectiles].xAxis = xAxis;
-		pList[currentProjectiles].yAxis = yAxis;
-		pList[currentProjectiles].zAxis = zAxis;
+		pList[currentProjectiles].ux = cos((yAxis - 90) * PI / 180);
+		pList[currentProjectiles].uy = -tan(xAxis * PI / 180);
+		pList[currentProjectiles].uz = sin((yAxis - 90) * PI / 180);
+
+		currentProjectiles++;
+		printf("projectiles = %d\n", currentProjectiles);
+		return 1;
+	}
+	return 0;
+}
+
+int addUnitProjectile(float x, float y, float z, float ux, float uy, float uz)
+{
+	if (currentProjectiles < MAXPROJECTILES)
+	{
+		pList[currentProjectiles].x = x;
+		pList[currentProjectiles].y = y;
+		pList[currentProjectiles].z = z;
+		pList[currentProjectiles].ux = ux;
+		pList[currentProjectiles].uy = uy;
+		pList[currentProjectiles].uz = uz;
 
 		currentProjectiles++;
 		printf("projectiles = %d\n", currentProjectiles);
@@ -54,24 +72,24 @@ void animateProjectiles()
 	//shift all projectiles
 	for(i = 0; i < currentProjectiles; i++)
 	{
-		pList[i].x += BULLETSPEED * cos((pList[i].yAxis - 90) * PI / 180);		//Could be stored in the struct
-		pList[i].z += BULLETSPEED * sin((pList[i].yAxis - 90) * PI / 180);
-		pList[i].y -= BULLETSPEED * tan((pList[i].xAxis) * PI / 180);
+		pList[i].x += BULLETSPEED * pList[i].ux;
+		pList[i].y += BULLETSPEED * pList[i].uy;
+		pList[i].z += BULLETSPEED * pList[i].uz;
 
-		setMobPosition(i, pList[i].x, pList[i].y, pList[i].z, pList[i].yAxis);
+		setMobPosition(i, pList[i].x - .5, pList[i].y, pList[i].z - .5, 1);
 	}
 
 	//projectiles flicker for the following code
 	for (i = currentProjectiles - 1; i >= 0; i--)
 	{
 		showMob(i);
-		collision = world[(int)(pList[i].x + .5)][(int)(pList[i].y + .5)][(int)(pList[i].z + .5)];
+		collision = world[(int)(pList[i].x)][(int)(pList[i].y + .5)][(int)(pList[i].z)];
 		if (collision != 0)
 		{
 			printf("boop\n");
 			if (collision == WALLCOLOUR)
 			{
-				world[(int)(pList[i].x + .5)][(int)(pList[i].y + .5)][(int)(pList[i].z + .5)] = 0;
+				world[(int)(pList[i].x)][(int)(pList[i].y + .5)][(int)(pList[i].z)] = 0;
 				printf("%d, collide with orange at %d,%d,%d\n", i, (int)(pList[i].x + .5), (int)(pList[i].y + .5), (int)(pList[i].z + .5));
 			}
 			removeProjectile(i);

@@ -21,7 +21,10 @@ typedef struct vMOB{
 
 	char **** animation;
 	int frameCount;
+	int frameTime;
 	int currentFrame;
+
+	int reload;
 }vMOB;
 
 //mobs get drawn bottom up
@@ -99,8 +102,11 @@ static char redMob [4][3][3][3] = {{{{0,0,0},
  					      			   	 {0,0,0},
 					      					 {3,0,3}}}};
 
+void updatevMob(vMOB * mob);
 
-vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount);
+float distance(float x1, float y1, float z1, float x2, float y2, float z2);
+
+vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload);
 
 void drawNextvMobFrame(vMOB* mob);
 

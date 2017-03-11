@@ -18,7 +18,8 @@
 #include "util.h"
 
 vMOB* roller1;
-extern vMOB * createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount);
+extern void updatevMob(vMOB * mob);
+extern vMOB * createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload);
 extern void drawNextvMobFrame(vMOB* mob);
 
 
@@ -682,12 +683,7 @@ float *la;
 			wallPushingPlayer();
 			animateProjectiles();
 
-			if(canSeePlayer(roller1))
-				printf("I CAN SEE YOU\n");
-			else
-				printf("where are you...\n");
-
-			drawNextvMobFrame(roller1);
+			updatevMob(roller1);
 
 		}
 
@@ -717,7 +713,7 @@ void mouse(int button, int state, int x, int y) {
 	   printf("down - ");
 		getViewPosition(&px,&py,&pz);
 		getViewOrientation(&pax,&pay,&paz);
-		addProjectile(px,py,pz,pax,pay,paz);
+		addEulerProjectile(px,py,pz,pax,pay,paz);
 	}
 
    printf("%d %d\n", x, y);
@@ -781,7 +777,7 @@ int i, j, k;
 		buildSkeletonWorld();
 		setViewPosition(-1.0,-20.0,-1.0);
 
-		roller1 = createvMob(10,10,10,3,3,3, redMob, 4);
+		roller1 = createvMob(10,10,10,3,3,3, redMob, 4, 30, 60);
 
 		//init the time in stepsSinceLastUpdate
 		stepsSinceLastUpdate();
