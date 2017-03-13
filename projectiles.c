@@ -19,7 +19,7 @@ int addEulerProjectile(float x, float y, float z, float xAxis, float yAxis, floa
 		pList[currentProjectiles].uz = sin((yAxis - 90) * PI / 180);
 
 		currentProjectiles++;
-		printf("projectiles = %d\n", currentProjectiles);
+		//printf("projectiles = %d\n", currentProjectiles);
 		return 1;
 	}
 	return 0;
@@ -37,7 +37,7 @@ int addUnitProjectile(float x, float y, float z, float ux, float uy, float uz)
 		pList[currentProjectiles].uz = uz;
 
 		currentProjectiles++;
-		printf("projectiles = %d\n", currentProjectiles);
+		//printf("projectiles = %d\n", currentProjectiles);
 		return 1;
 	}
 	return 0;
@@ -50,7 +50,7 @@ void removeProjectile(int projectileToRemove)
 	{
 		currentProjectiles--;
 		hideMob(currentProjectiles);
-		printf("dead projectile = %d\n", currentProjectiles);
+		//printf("dead projectile = %d\n", currentProjectiles);
 		return;
 	}
 
@@ -60,9 +60,9 @@ void removeProjectile(int projectileToRemove)
 		pList[projectileToRemove] = pList[currentProjectiles - 1];
 		currentProjectiles--;
 		hideMob(currentProjectiles);
-		printf("last projectile = %d\n", currentProjectiles);
+		//printf("last projectile = %d\n", currentProjectiles);
 	}
-	printf("wut = %d\n", currentProjectiles);
+	//printf("wut = %d\n", currentProjectiles);
 }
 
 void animateProjectiles()
@@ -86,18 +86,18 @@ void animateProjectiles()
 		collision = world[(int)(pList[i].x)][(int)(pList[i].y + .5)][(int)(pList[i].z)];
 		if (collision != 0)
 		{
-			printf("boop\n");
+			//printf("boop\n");
 			if (collision == WALLCOLOUR)
 			{
 				world[(int)(pList[i].x)][(int)(pList[i].y + .5)][(int)(pList[i].z)] = 0;
-				printf("%d, collide with orange at %d,%d,%d\n", i, (int)(pList[i].x + .5), (int)(pList[i].y + .5), (int)(pList[i].z + .5));
+				//printf("%d, collide with orange at %d,%d,%d\n", i, (int)(pList[i].x + .5), (int)(pList[i].y + .5), (int)(pList[i].z + .5));
 			}
 			removeProjectile(i);
 			hideMob(i);
 		}
 		else if ((int)(pList[i].y + .5 > WORLDY) || (int)(pList[i].y + .5 < 0) || (int)(pList[i].x + .5 > WORLDX) || (int)(pList[i].x + .5 < 0) || (int)(pList[i].z + .5 > WORLDZ) || (int)(pList[i].z + .5 < 0))
 		{
-			printf("beep\n");
+			//printf("beep\n");
 			removeProjectile(i);
 			hideMob(i);
 		}

@@ -5,6 +5,13 @@
 #include "util.h"
 #include "projectiles.h"
 #include <stdio.h>
+#include "util.h"
+
+
+#define VIEW_CONE PI / 4
+
+typedef enum moveState_t {RANDOM, DODGING} moveState_t;
+typedef enum moveDirection_t {UP, DOWN, LEFT, RIGHT, STALL} moveDirection_t;
 
 typedef struct vMOB{
 	int x;
@@ -24,7 +31,17 @@ typedef struct vMOB{
 	int frameTime;
 	int currentFrame;
 
+	float mobGirth;
+	int moveSpeed;
 	int reload;
+
+	int moveTimer;
+	int reloadTimer;
+	int frameTimer;
+
+	moveState_t moveState;
+	moveDirection_t moveDir;
+
 }vMOB;
 
 //mobs get drawn bottom up
@@ -106,11 +123,15 @@ void updatevMob(vMOB * mob);
 
 float distance(float x1, float y1, float z1, float x2, float y2, float z2);
 
-vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload);
+vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
 
-void drawNextvMobFrame(vMOB* mob);
+void erasevMob(vMOB* mob);
+
+void drawvMob(vMOB* mob);
 
 int canSeePlayer(vMOB* mob);
+
+int inPlayerFOV(vMOB* mob);
 
 int checkIfHit(vMOB* mob);
 

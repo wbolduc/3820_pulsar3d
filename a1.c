@@ -17,9 +17,10 @@
 #include "map.h"
 #include "util.h"
 
-vMOB* roller1;
+vMOB* mobs[MOBCOUNT];
+char mobStart[6][6] = {0};
 extern void updatevMob(vMOB * mob);
-extern vMOB * createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload);
+extern vMOB * createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
 extern void drawNextvMobFrame(vMOB* mob);
 
 
@@ -255,6 +256,35 @@ int getPivotY(int wall)
 	return pivotY;
 }
 
+int checkWallVacancy(int wall)	//1 if vacant
+{
+	int crush = wall % 11;
+	int line, span, stop;
+	int i;
+
+	if (crush < 5)
+	{	//vertical Wall
+		line = (crush + 1) * COMBINEDWIDTH;
+		span = (wall / 11) * COMBINEDWIDTH + 1;
+		stop = span + HALLWIDTH;
+		for (span; span < stop; span++)
+			for (i = 1; i < WALLHEIGHT + 1; i++)
+				if (world[line][i][span] != 0)
+					return 0;
+	}
+	else
+	{	//horizontal Wall
+		line = (wall / 11 + 1) * COMBINEDWIDTH;
+		span = (crush - 5) * COMBINEDWIDTH + 1;
+		stop = span + HALLWIDTH;
+		for (span; span < stop; span++)
+			for (i = 1; i < WALLHEIGHT + 1; i++)
+				if (world[span][i][line] != 0)
+					return 0;
+	}
+	return 1;
+}
+
 void placeBlock(int pivotX, int pivotY, int ori, int dir, int step, int block)
 {
 	if (ori)
@@ -339,15 +369,15 @@ void moveWall()
 				sOri = 1;
 				if (sWall > 10)
 				{
-					if (!WALLS[sWall - 11])//MOVE UP
+					if (!WALLS[sWall - 11] && checkWallVacancy(sWall - 11))//MOVE UP
 					{
 						spots[availibleWalls++] = sWall - 11;
 					}
-					if (!WALLS[sWall - 6]) //UP LEFT
+					if (!WALLS[sWall - 6] && checkWallVacancy(sWall - 6)) //UP LEFT
 					{
 						spots[availibleWalls++] = sWall - 6;
 					}
-					if (!WALLS[sWall - 5]) //UP RIGHT
+					if (!WALLS[sWall - 5]  && checkWallVacancy(sWall - 5)) //UP RIGHT
 					{
 						spots[availibleWalls++] = sWall - 5;
 					}
@@ -355,15 +385,15 @@ void moveWall()
 
 				if (sWall < 49)
 				{
-					if (!WALLS[sWall + 11])//MOVE DOWN
+					if (!WALLS[sWall + 11] && checkWallVacancy(sWall + 11))//MOVE DOWN
 					{
 						spots[availibleWalls++] = sWall + 11;
 					}
-					if (!WALLS[sWall + 5]) //DOWN LEFT
+					if (!WALLS[sWall + 5] && checkWallVacancy(sWall + 5)) //DOWN LEFT
 					{
 						spots[availibleWalls++] = sWall + 5;
 					}
-					if (!WALLS[sWall + 6]) //DOWN RIGHT
+					if (!WALLS[sWall + 6] && checkWallVacancy(sWall + 6)) //DOWN RIGHT
 					{
 						spots[availibleWalls++] = sWall + 6;
 					}
@@ -374,15 +404,15 @@ void moveWall()
 				sOri = 0;
 				if (sWall % 11 != 5)
 				{
-					if (!WALLS[sWall - 1])//MOVE LEFT
+					if (!WALLS[sWall - 1] && checkWallVacancy(sWall - 1))//MOVE LEFT
 					{
 						spots[availibleWalls++] = sWall - 1;
 					}
-					if (!WALLS[sWall - 6]) //LEFT UP
+					if (!WALLS[sWall - 6] && checkWallVacancy(sWall - 6)) //LEFT UP
 					{
 						spots[availibleWalls++] = sWall - 6;
 					}
-					if (!WALLS[sWall + 5]) //RIGHT UP
+					if (!WALLS[sWall + 5] && checkWallVacancy(sWall + 5)) //LEFT DOWN
 					{
 						spots[availibleWalls++] = sWall + 5;
 					}
@@ -390,15 +420,15 @@ void moveWall()
 
 				if (sWall % 11 != 10)
 				{
-					if (!WALLS[sWall + 1])//MOVE RIGHT
+					if (!WALLS[sWall + 1] && checkWallVacancy(sWall + 1))//MOVE RIGHT
 					{
 						spots[availibleWalls++] = sWall + 1;
 					}
-					if (!WALLS[sWall - 5]) //RIGHT UP
+					if (!WALLS[sWall - 5] && checkWallVacancy(sWall - 5)) //RIGHT UP
 					{
 						spots[availibleWalls++] = sWall - 5;
 					}
-					if (!WALLS[sWall + 6]) //RIGHT DOWN
+					if (!WALLS[sWall + 6] && checkWallVacancy(sWall + 6)) //RIGHT DOWN
 					{
 						spots[availibleWalls++] = sWall + 6;
 					}
@@ -427,7 +457,7 @@ void moveWall()
 
 		dPivotX = getPivotX(dWall);
 		dPivotY = getPivotY(dWall);
-
+		checkWallVacancy(dWall);
 		/*
 		for (i = 0; i < availibleWalls; i++)
 		{
@@ -501,15 +531,6 @@ void buildSkeletonWorld()
 	for(i=0; i< TOTALGRIDSIZE; i++)
 		for(k=0; k< TOTALGRIDSIZE; k++)
 			world[i][0][k] = 1;
-
-	//add bumps on floor for testing TODO: REMOVE THESE
-	world[4][3][10] = 6;
-	world[4][2][9] = 6;
-	world[4][1][8] = 6;
-	world[4][1][7] = 6;
-
-	world[2][1][1] = 8;
-	world[1][1][3] = 5;
 
 
 	//make Outside walls
@@ -683,10 +704,11 @@ float *la;
 			wallPushingPlayer();
 			animateProjectiles();
 
-			updatevMob(roller1);
-
+			for (i = 0; i < MOBCOUNT; i++)
+			{
+				updatevMob(mobs[i]);
+			}
 		}
-
    }
 }
 
@@ -724,6 +746,7 @@ void mouse(int button, int state, int x, int y) {
 int main(int argc, char** argv)
 {
 int i, j, k;
+char **** mobAni;
 	/* initialize the graphics system */
    graphicsInit(&argc, argv);
 
@@ -777,7 +800,27 @@ int i, j, k;
 		buildSkeletonWorld();
 		setViewPosition(-1.0,-20.0,-1.0);
 
-		roller1 = createvMob(10,10,10,3,3,3, redMob, 4, 30, 60);
+		for (j = 0; j < MOBCOUNT; j++)
+		{
+			do
+			{
+				i = rand() % 6;
+				k = rand() % 6;
+			}
+			while (mobStart[i][k] == 1);
+			mobStart[i][k] = 1;
+
+			if(rand()%2)
+			{
+				mobAni = redMob;
+			}
+			else
+			{
+				mobAni = yellowMob;
+			}
+
+			mobs[j] = createvMob(i * COMBINEDWIDTH + COMBINEDWIDTH/2, 2, k * COMBINEDWIDTH + COMBINEDWIDTH/2, 3,3,3, mobAni, 4, 20, 10000, 5);
+		}
 
 		//init the time in stepsSinceLastUpdate
 		stepsSinceLastUpdate();
@@ -805,6 +848,9 @@ int i, j, k;
 	/* code after this will not run until the program exits */
    glutMainLoop();
 
-	free(roller1);
+	for (i = 0; i < MOBCOUNT; i++)
+	{
+		free(mobs[i]);
+	}
    return 0;
 }
