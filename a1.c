@@ -19,8 +19,10 @@
 
 vMOB* mobs[MOBCOUNT];
 char mobStart[6][6] = {0};
+int dWall = 0;
+
 extern void updatevMob(vMOB * mob);
-extern vMOB * createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
+extern vMOB * createvMob(int mobType, int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
 extern void drawNextvMobFrame(vMOB* mob);
 
 
@@ -347,7 +349,6 @@ void moveWall()
 	static int sPivotX;
 	static int sPivotY;
 
-	static int dWall;
 	static int dOri;
 	static int dBuildDir;
 	static int dPivotX;
@@ -700,14 +701,20 @@ float *la;
 				gravity();
 			}
 
+			printf("You are looking at mobs:");
+			for (i = 0; i < MOBCOUNT; i++)
+			{
+				if(inPlayerFOV(mobs[i]))
+				{
+					printf("%d ", i);
+				}
+				updatevMob(mobs[i]);
+			}
+			printf("\n");
+
 			moveWall();
 			wallPushingPlayer();
 			animateProjectiles();
-
-			for (i = 0; i < MOBCOUNT; i++)
-			{
-				updatevMob(mobs[i]);
-			}
 		}
    }
 }
@@ -747,6 +754,8 @@ int main(int argc, char** argv)
 {
 int i, j, k;
 char **** mobAni;
+int mobType;
+
 	/* initialize the graphics system */
    graphicsInit(&argc, argv);
 
@@ -796,7 +805,6 @@ char **** mobAni;
       createPlayer(0, 52.0, 27.0, 52.0, 0.0);
 
    } else {
-
 		buildSkeletonWorld();
 		setViewPosition(-1.0,-20.0,-1.0);
 
@@ -810,7 +818,7 @@ char **** mobAni;
 			while (mobStart[i][k] == 1);
 			mobStart[i][k] = 1;
 
-			if(rand()%2)
+			if((mobType = rand()%2))
 			{
 				mobAni = redMob;
 			}
@@ -819,7 +827,7 @@ char **** mobAni;
 				mobAni = yellowMob;
 			}
 
-			mobs[j] = createvMob(i * COMBINEDWIDTH + COMBINEDWIDTH/2, 2, k * COMBINEDWIDTH + COMBINEDWIDTH/2, 3,3,3, mobAni, 4, 20, 10000, 5);
+			mobs[j] = createvMob(mobType, i * COMBINEDWIDTH + COMBINEDWIDTH/2, 2, k * COMBINEDWIDTH + COMBINEDWIDTH/2, 3,3,3, mobAni, 4, 20, 10000, 100000);
 		}
 
 		//init the time in stepsSinceLastUpdate

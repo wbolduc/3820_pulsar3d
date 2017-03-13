@@ -19,7 +19,7 @@ projectiles: projectiles.c graphics.h
 	gcc -c projectiles.c graphics.h $(INCLUDES)
 
 map: map.c graphics.h projectiles.h
-	gcc -c map.c graphics.h projectiles.h $(INCLUDES)
+	gcc -c map.c graphics.h projectiles.h mobs.h $(INCLUDES)
 
 mobs: mobs.c
 	gcc -c mobs.c $(INCLUDES)

@@ -5,6 +5,8 @@
 
 #define LOS_GRANULARITY 1
 
+extern int dWall;
+
 extern void getViewPosition(float *x, float *y, float *z);
 extern void showMob(int number);
 extern void setMobPosition(int number, float x, float y, float z, float mobroty);
@@ -52,9 +54,12 @@ moveDirection_t pickDirection (int usedDirs[4], int remaining)
 moveDirection_t randomMove(vMOB * mob)
 {
 	int newX, newZ;
-	int xStop, yStart, stop;
+	int stop;
 	int hitSide;
 	int i, j;
+
+	int line;
+	int ori;
 
 	int usedDirs[4] = {0};
 	int remaining = 4;
@@ -65,6 +70,16 @@ moveDirection_t randomMove(vMOB * mob)
 		mob->moveDir = rand() % 4;
 	}
 
+	//find which wall is currently closing
+	ori = dWall % 11;
+	if (ori < 5)
+		line = (ori + 1) * COMBINEDWIDTH;
+	else
+		line = (dWall / 11 + 1) * COMBINEDWIDTH;
+	ori = (ori < 5);
+	//printf("Wall %d, ori %d, line %d ", dWall, ori, line);
+
+	//try directions
 TRYDIRECTION:
 	switch(mob->moveDir)
 	{
@@ -76,6 +91,13 @@ TRYDIRECTION:
 
 			stop = mob->x + mob->xSize;
 			hitSide = mob->z + mob->zSize + 1;
+			//printf("dir = %d, hitSide = %d\n", mob->moveDir, hitSide);
+			if (!ori && hitSide == line)
+			{
+				//printf("WALL-------------\n");
+				mob->moveDir = pickDirection(usedDirs, remaining);
+				goto TRYDIRECTION;
+			}
 
 			for (i = mob->x; i < stop; i++)
 				if (world[i][mob->y][hitSide] != 0)
@@ -98,6 +120,14 @@ TRYDIRECTION:
 			stop = mob->x + mob->xSize;
 			hitSide = mob->z - 1;
 
+			//printf("dir = %d, hitSide = %d\n", mob->moveDir, hitSide);
+			if (!ori && hitSide == line)
+			{
+				//printf("WALL-------------\n");
+				mob->moveDir = pickDirection(usedDirs, remaining);
+				goto TRYDIRECTION;
+			}
+
 			for (i = mob->x; i < stop; i++)
 				if (world[i][mob->y][hitSide] != 0)
 				{
@@ -118,6 +148,14 @@ TRYDIRECTION:
 
 			stop = mob->z + mob->zSize;
 			hitSide = mob->x - 1;
+
+			//printf("dir = %d, hitSide = %d\n", mob->moveDir, hitSide);
+			if (ori && hitSide == line)
+			{
+				//printf("WALL-------------\n");
+				mob->moveDir = pickDirection(usedDirs, remaining);
+				goto TRYDIRECTION;
+			}
 
 			for (i = mob->z; i < stop; i++)
 				if (world[hitSide][mob->y][i] != 0)
@@ -140,6 +178,14 @@ TRYDIRECTION:
 			stop = mob->z + mob->zSize;
 			hitSide = mob->x + mob->xSize + 1;
 
+			//printf("dir = %d, hitSide = %d\n", mob->moveDir, hitSide);
+			if (ori && hitSide == line)
+			{
+				//printf("WALL-------------\n");
+				mob->moveDir = pickDirection(usedDirs, remaining);
+				goto TRYDIRECTION;
+			}
+
 			for (i = mob->z; i < stop; i++)
 				if (world[hitSide][mob->y][i] != 0)
 				{
@@ -155,7 +201,7 @@ TRYDIRECTION:
 		}
 		case STALL:
 		{
-			printf("Mob Stuck\n");
+			//printf("Mob Stuck\n");
 			newX = mob->x;
 			newZ = mob->z;
 		}
@@ -173,7 +219,6 @@ void updatevMob(vMOB * mob)
 	float px, py, pz, ux, uy, uz, mx, my, mz;
 	float dist;
 	float mobGirth = mob->mobGirth;
-
 
 	//check if in bullet path
 	if (mob->moveTimer++ == mob->moveSpeed)
@@ -234,10 +279,12 @@ void updatevMob(vMOB * mob)
 	}
 }
 
-vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed)
+vMOB* createvMob(int mobType, int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed)
 {
 	float a,b,c;
 	vMOB* newMob = malloc(sizeof(vMOB));
+
+	newMob->mobType = mobType;
 
 	newMob->x = x;
 	newMob->y = y;

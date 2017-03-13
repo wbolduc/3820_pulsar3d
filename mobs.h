@@ -14,6 +14,8 @@ typedef enum moveState_t {RANDOM, DODGING} moveState_t;
 typedef enum moveDirection_t {UP, DOWN, LEFT, RIGHT, STALL} moveDirection_t;
 
 typedef struct vMOB{
+	int mobType;
+
 	int x;
 	int y;
 	int z;
@@ -123,7 +125,7 @@ void updatevMob(vMOB * mob);
 
 float distance(float x1, float y1, float z1, float x2, float y2, float z2);
 
-vMOB* createvMob(int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
+vMOB* createvMob(int mobType, int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
 
 void erasevMob(vMOB* mob);
 
