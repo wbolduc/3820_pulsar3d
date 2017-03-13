@@ -16,7 +16,7 @@ static float worldFloor[] 	= {0.0,  1.0, 0.0, .5};
 static float inWall[]		= {1.0, 0.64, 0.0, 1.0};
 static float pillar[]		= {0.0,  0.0, 0.0, 1.0};
 
-static float red[]   = {1.0, 0.0, 0.0, 1.0};
+static float red[]   	= {1.0, 0.0, 0.0, 1.0};
 static float yellow[]   = {1.0, 1.0, 0.0, 1.0};
 
 

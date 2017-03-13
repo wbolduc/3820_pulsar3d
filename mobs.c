@@ -431,9 +431,11 @@ int inPlayerFOV(vMOB* mob)
 	puz = sin((angle - 90) * PI / 180);
 
 	//player to mob unit vector
-	dist = distance(px, 0, pz, mob->x, 0, mob->z);
-	mux = (mob->x - px)/dist;
-	muz = (mob->z - pz)/dist;
+	mux = ((float)(mob->x + mob->xEye) + .5 + px);
+	muz = ((float)(mob->z + mob->zEye) + .5 + pz);
+	dist = sqrt(mux * mux + muz * muz);
+	mux /= dist;
+	muz /= dist;
 
 	if (acos(pux * mux + puz * muz) <= VIEW_CONE)
 	{

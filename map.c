@@ -23,9 +23,9 @@ void drawvMobOnMap(int m, int mapx, int mapy, int size)
 	int pixelSize = size / TOTALGRIDSIZE;
 
 	if (mob->mobType == 0)
-		set2Dcolour(red);
-	else
 		set2Dcolour(yellow);
+	else
+		set2Dcolour(red);
 
 	fixedDraw2Dbox(mapx + (mob->x * pixelSize), mapy + (mob->z * pixelSize), mapx + ((mob->x + mob->xSize ) * pixelSize) + pixelSize, mapy + ((mob->z + mob->zSize) * pixelSize) + pixelSize);
 

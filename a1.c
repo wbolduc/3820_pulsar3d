@@ -827,7 +827,7 @@ int mobType;
 				mobAni = yellowMob;
 			}
 
-			mobs[j] = createvMob(mobType, i * COMBINEDWIDTH + COMBINEDWIDTH/2, 2, k * COMBINEDWIDTH + COMBINEDWIDTH/2, 3,3,3, mobAni, 4, 20, 10000, 100000);
+			mobs[j] = createvMob(mobType, i * COMBINEDWIDTH + COMBINEDWIDTH/2, 2, k * COMBINEDWIDTH + COMBINEDWIDTH/2, 3,3,3, mobAni, 4, 20, 90, 20);
 		}
 
 		//init the time in stepsSinceLastUpdate

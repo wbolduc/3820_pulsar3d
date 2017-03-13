@@ -25,4 +25,4 @@ mobs: mobs.c
 	gcc -c mobs.c $(INCLUDES)
 
 clean:
-	rm a1 a1.o graphics.o visible.o projectiles.o map.o
+	rm a1 a1.o graphics.o visible.o projectiles.o map.o mobs.o
