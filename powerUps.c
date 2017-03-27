@@ -42,6 +42,7 @@ void bounceEffect()
 	static int timer;
 	static float px, py, pz;
 	static float sx, sy, sz;
+	static float dx, dz;
 	static float ux, uz; //translation unit vectors
 	static float stepDist;
 	static float totalDist;
@@ -70,8 +71,10 @@ void bounceEffect()
 		printf("%d, %d\n", nx, nz);
 
 		//slide player
-		ux = (float)nx - px;
-		uz = (float)nz - pz;
+		dx = (float)nx + .5;
+		dz = (float)nz + .5;
+		ux = dx - px;
+		uz = dz - pz;
 		totalDist = sqrt(ux*ux + uz*uz);
 		stepDist = totalDist / bounce_time;
 		ux = ux / totalDist * stepDist;
@@ -130,7 +133,6 @@ void rainSetup()
 	RAINLIST[3].z = (int)(-pz) - 1;
 	world[RAINLIST[3].x][RAINLIST[3].y][RAINLIST[3].z] = 6;
 
-	printf("akajsdfl;kjasd;lfkja;lsdkjf;laskjdf;lkjasd;fljas;ldkjf;laskjdf;lkajsd;lfkjas;ldkjf;alskjdf;lkasjdf;lkjasd;fl\n");
 	isRaining = 1;
 }
 

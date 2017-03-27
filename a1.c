@@ -759,7 +759,7 @@ float *la;
 				bounceEffect();
 				continue;
 			}
-			printf("isRaining = %d\n", isRaining);
+			
 			if(isRaining)
 				rainEffect();
 
