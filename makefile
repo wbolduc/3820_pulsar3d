@@ -28,4 +28,4 @@ powerUps: powerUps.c
 	gcc -c powerUps.c $(INCLUDES)
 
 clean:
-	rm a1 a1.o graphics.o visible.o projectiles.o map.o mobs.o
+	rm a1 a1.o graphics.o visible.o projectiles.o map.o mobs.o powerUps.o

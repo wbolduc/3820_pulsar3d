@@ -11,6 +11,8 @@
 #define bounce_height 48
 #define bounce_time 240
 
+#define rain_blocks 4
+
 typedef enum {bounce, teleport, rain, key, none} powerUp_t;
 
 typedef struct POWERUP
@@ -23,5 +25,7 @@ typedef struct POWERUP
 }POWERUP;
 
 POWERUP powerList [power_up_count];
+
+POWERUP RAINLIST [rain_blocks];
 
 #endif /*_POWERUPS_H*/

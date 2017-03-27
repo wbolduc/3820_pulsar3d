@@ -25,12 +25,14 @@ int dWall = 0;
 int playerHasKey = 0;
 
 powerUp_t underEffect = none;
+int isRaining = 0;
 
 extern void updatevMob(vMOB * mob);
 extern vMOB * createvMob(int mobType, int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
 extern void drawNextvMobFrame(vMOB* mob);
 
 extern void initPowerUps();
+extern void rainEffect();
 
 	/* mouse function called by GLUT when a button is pressed or released */
 void mouse(int, int, int, int);
@@ -757,6 +759,9 @@ float *la;
 				bounceEffect();
 				continue;
 			}
+			printf("isRaining = %d\n", isRaining);
+			if(isRaining)
+				rainEffect();
 
 			if(!flycontrol)
 			{

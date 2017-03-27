@@ -12,6 +12,7 @@ extern void setViewPosition(float x, float y, float z);
 
 extern int playerHasKey;
 extern powerUp_t underEffect;
+extern int isRaining;
 
 void teleEffect()
 {
@@ -24,7 +25,6 @@ void teleEffect()
 
 	}while(world[x][3][z] != 0);
 
-	printf("%d,%d,%d~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", x, 3, z);
 	setViewPosition(-(float)x, -3.0, -(float)z);
 }
 
@@ -98,11 +98,74 @@ void bounceEffect()
 	}
 }
 
-void rainEffect()
+void rainSetup()
 {
+	int i;
+	float px, py, pz;
 	printf("rain~~~~\n");
+
+	getViewPosition(&px,&py,&pz);
+
+	RAINLIST[0].powerType = none;
+	RAINLIST[0].x = (int)(-px) + 1;
+	RAINLIST[0].y = 20;
+	RAINLIST[0].z = (int)(-pz);
+	world[RAINLIST[0].x][RAINLIST[0].y][RAINLIST[0].z] = 6;
+
+	RAINLIST[1].powerType = none;
+	RAINLIST[1].x = (int)(-px) - 1;
+	RAINLIST[1].y = 20;
+	RAINLIST[1].z = (int)(-pz);
+	world[RAINLIST[1].x][RAINLIST[1].y][RAINLIST[1].z] = 6;
+
+	RAINLIST[2].powerType = none;
+	RAINLIST[2].x = (int)(-px);
+	RAINLIST[2].y = 20;
+	RAINLIST[2].z = (int)(-pz) + 1;
+	world[RAINLIST[2].x][RAINLIST[2].y][RAINLIST[2].z] = 6;
+
+	RAINLIST[3].powerType = none;
+	RAINLIST[3].x = (int)(-px);
+	RAINLIST[3].y = 20;
+	RAINLIST[3].z = (int)(-pz) - 1;
+	world[RAINLIST[3].x][RAINLIST[3].y][RAINLIST[3].z] = 6;
+
+	printf("akajsdfl;kjasd;lfkja;lsdkjf;laskjdf;lkjasd;fljas;ldkjf;laskjdf;lkajsd;lfkjas;ldkjf;alskjdf;lkasjdf;lkjasd;fl\n");
+	isRaining = 1;
 }
 
+void rainEffect()
+{
+	static int waterDrop = 0;
+	static int dropheight = 20;
+
+	static int delay = 0;
+
+	if (delay++ < 3)		//dirty dirty delay
+		return;
+	else
+	delay = 0;
+
+
+	if (dropheight)
+	{
+		if (world[RAINLIST[waterDrop].x][RAINLIST[waterDrop].y][RAINLIST[waterDrop].z] == 6)
+			world[RAINLIST[waterDrop].x][RAINLIST[waterDrop].y][RAINLIST[waterDrop].z] = 0;
+		if (world[RAINLIST[waterDrop].x][--RAINLIST[waterDrop].y][RAINLIST[waterDrop].z] == 0)
+			world[RAINLIST[waterDrop].x][RAINLIST[waterDrop].y][RAINLIST[waterDrop].z] = 6;
+
+		if (++waterDrop > 3)
+		{
+			waterDrop = 0;
+			dropheight--;
+		}
+	}
+	else
+	{
+		isRaining = 0;
+		dropheight = 20;
+	}
+}
 
 POWERUP newPowerUp()
 {
@@ -192,7 +255,7 @@ void updatePowerUps()
 					underEffect = bounce;
 					break;
 				case rain:
-					rainEffect();
+					rainSetup();
 					break;
 				case key:
 					playerHasKey = 1;
