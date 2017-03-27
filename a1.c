@@ -16,15 +16,19 @@
 #include "projectiles.h"
 #include "map.h"
 #include "util.h"
+#include "powerUps.h"
 
 vMOB* mobs[MOBCOUNT];
 char mobStart[6][6] = {0};
 int dWall = 0;
 
+powerUp_t underEffect = none;
+
 extern void updatevMob(vMOB * mob);
 extern vMOB * createvMob(int mobType, int x, int y, int z, int xSize, int ySize, int zSize, char **** mobAnimation, int frameCount, int frameTime, int reload, int moveSpeed);
 extern void drawNextvMobFrame(vMOB* mob);
 
+extern void initPowerUps();
 
 	/* mouse function called by GLUT when a button is pressed or released */
 void mouse(int, int, int, int);
@@ -696,25 +700,31 @@ float *la;
 
 		for(steps; steps > 0; steps--)
 		{
+			if(underEffect == bounce)
+			{
+				bounceEffect();
+				continue;
+			}
+
 			if(!flycontrol)
 			{
 				gravity();
 			}
 
-			printf("You are looking at mobs:");
+			//printf("You are looking at mobs:");
 			for (i = 0; i < MOBCOUNT; i++)
 			{
-				if(inPlayerFOV(mobs[i]))
+				/*if(inPlayerFOV(mobs[i]))
 				{
 					printf("%d ", i);
-				}
+				}*/
 				updatevMob(mobs[i]);
 			}
-			printf("\n");
-
+			//printf("\n");
 			moveWall();
 			wallPushingPlayer();
 			animateProjectiles();
+			updatePowerUps();
 		}
    }
 }
@@ -832,6 +842,8 @@ int mobType;
 
 		//init the time in stepsSinceLastUpdate
 		stepsSinceLastUpdate();
+
+		initPowerUps();
    }
 
 	/*

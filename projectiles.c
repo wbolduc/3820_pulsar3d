@@ -1,11 +1,15 @@
 #include "projectiles.h"
 #include "graphics.h"
+#include "mobs.h"
 #include <stdio.h>
 
 
 extern void setMobPosition(int number, float x, float y, float z, float mobroty);
 extern void hideMob(int number);
 extern void showMob(int number);
+extern float distance(float x1, float y1, float z1, float x2, float y2, float z2);
+extern void getViewPosition(float *x, float *y, float *z);
+
 //0 if cannot add projectile
 int addEulerProjectile(float x, float y, float z, float xAxis, float yAxis, float zAxis)
 {
@@ -68,7 +72,7 @@ void removeProjectile(int projectileToRemove)
 void animateProjectiles()
 {
 	int i, collision;
-
+	float px, py, pz;
 	//shift all projectiles
 	for(i = 0; i < currentProjectiles; i++)
 	{
@@ -92,14 +96,25 @@ void animateProjectiles()
 				world[(int)(pList[i].x)][(int)(pList[i].y + .5)][(int)(pList[i].z)] = 0;
 				//printf("%d, collide with orange at %d,%d,%d\n", i, (int)(pList[i].x + .5), (int)(pList[i].y + .5), (int)(pList[i].z + .5));
 			}
+
 			removeProjectile(i);
 			hideMob(i);
 		}
-		else if ((int)(pList[i].y + .5 > WORLDY) || (int)(pList[i].y + .5 < 0) || (int)(pList[i].x + .5 > WORLDX) || (int)(pList[i].x + .5 < 0) || (int)(pList[i].z + .5 > WORLDZ) || (int)(pList[i].z + .5 < 0))
+		else
 		{
-			//printf("beep\n");
-			removeProjectile(i);
-			hideMob(i);
+			getViewPosition(&px, &py, &pz);
+			if (distance(pList[i].x, pList[i].y, pList[i].z, -px, -py, -pz) < .5)	//check if player is hit
+			{
+				printf("hit by projectile\n--\n--\n--\n--\n--\n-- %d\n", i);
+				removeProjectile(i);
+				hideMob(i);
+			}
+			else if ((int)(pList[i].y + .5 > WORLDY) || (int)(pList[i].y + .5 < 0) || (int)(pList[i].x + .5 > WORLDX) || (int)(pList[i].x + .5 < 0) || (int)(pList[i].z + .5 > WORLDZ) || (int)(pList[i].z + .5 < 0))
+			{
+				//printf("beep\n");
+				removeProjectile(i);
+				hideMob(i);
+			}
 		}
 	}
 
