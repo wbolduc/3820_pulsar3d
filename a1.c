@@ -22,6 +22,8 @@ vMOB* mobs[MOBCOUNT];
 char mobStart[6][6] = {0};
 int dWall = 0;
 
+int playerHasKey = 0;
+
 powerUp_t underEffect = none;
 
 extern void updatevMob(vMOB * mob);
@@ -93,6 +95,45 @@ extern float corners[4][3];
 extern void ExtractFrustum();
 extern void tree(float, float, float, float, float, float, int);
 
+void buildSkeletonWorld();
+
+void regenGame()
+{
+	int i, j, k;
+	char **** mobAni;
+	int mobType;
+	playerHasKey = 0;
+	buildSkeletonWorld();
+	setViewPosition(-5.0,-15.0,-5.0);
+
+	for (j = 0; j < MOBCOUNT; j++)
+	{
+		do
+		{
+			i = rand() % 6;
+			k = rand() % 6;
+		}
+		while (mobStart[i][k] == 1);
+		mobStart[i][k] = 1;
+
+		if((mobType = rand()%2))
+		{
+			mobAni = redMob;
+		}
+		else
+		{
+			mobAni = yellowMob;
+		}
+
+		free(mobs[j]);	//NOTE: THIS IS DEPLORABLE CODING PRACTICE
+		mobs[j] = createvMob(mobType, i * COMBINEDWIDTH + COMBINEDWIDTH/2, 2, k * COMBINEDWIDTH + COMBINEDWIDTH/2, 3,3,3, mobAni, 4, 20, 90, 20);
+	}
+
+	initPowerUps();
+}
+
+
+
 /********* end of extern variable declarations **************/
 
 
@@ -123,6 +164,13 @@ void collisionResponse() {
 	{
 		//printf("would go out of world\n");
 		setViewPosition(oldX, oldY, oldZ);
+		return;
+	}
+
+	if(world[-(int)x][-(int)y][-(int)z] == 5 && playerHasKey)	//win door
+	{
+		printf("OH MY GOSH YOU WON!\nyour prize is...\n~~~~To Stop Playing This Game~~~~\n");
+		regenGame();
 		return;
 	}
 
@@ -584,13 +632,17 @@ void buildSkeletonWorld()
 		}
 	}
 
+	//make win door
+	for (k = 0; k < WALLHEIGHT - 2; k++)
+		for(j = 3; j < 8; j++)
+			world[0][k][j] = 5;
+
 	//make mobs
 	for (i = 0; i < 10; i++)
 	{
 		createMob(i,0,0,0,0);
 		hideMob(i);
 	}
-
 }
 
 

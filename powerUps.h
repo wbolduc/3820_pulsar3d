@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include "graphics.h"
 
-#define power_up_count 20
+#define power_up_count 30
 #define pickup_dist 1.5
 
-#define bounce_height 40
+#define bounce_height 48
 #define bounce_time 240
 
-typedef enum {bounce, teleport, rain, none} powerUp_t;
+typedef enum {bounce, teleport, rain, key, none} powerUp_t;
 
 typedef struct POWERUP
 {

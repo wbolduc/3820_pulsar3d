@@ -10,6 +10,7 @@ extern void getViewPosition(float *x, float *y, float *z);
 
 extern void setViewPosition(float x, float y, float z);
 
+extern int playerHasKey;
 extern powerUp_t underEffect;
 
 void teleEffect()
@@ -61,8 +62,8 @@ void bounceEffect()
 		//pick new location
 		do
 		{
-			nx = rand() % TOTALGRIDSIZE - 1;
-			nz = rand() % TOTALGRIDSIZE - 1;
+			nx = rand() % (TOTALGRIDSIZE - 2) + 1;
+			nz = rand() % (TOTALGRIDSIZE - 2) + 1;
 
 		}while(world[nx][3][nz] != 0);
 
@@ -95,14 +96,6 @@ void bounceEffect()
 		midBounce = 0;
 		underEffect = none;
 	}
-
-
-
-
-
-
-
-	//drop player
 }
 
 void rainEffect()
@@ -142,6 +135,9 @@ void placePowerUp(POWERUP pu)
 		case rain:
 			colour = 2;
 			break;
+		case key:
+			colour = 5;
+			break;
 	}
 
 	//place cube in world
@@ -151,11 +147,25 @@ void placePowerUp(POWERUP pu)
 void initPowerUps()
 {
 	int i;
-	for (i = 0; i < power_up_count; i++)
+	POWERUP pu;
+
+	for (i = 0; i < power_up_count - 1; i++)
 	{
 		powerList[i] = newPowerUp();
 		placePowerUp(powerList[i]);
 	}
+
+	//make a key
+	pu.powerType = key;
+	do
+	{
+		pu.x = 1 + (rand() % TOTALGRIDSIZE);
+		pu.y = 1;
+		pu.z = 1 + (rand() % TOTALGRIDSIZE);
+	}
+	while (pu.x % COMBINEDWIDTH == 0 || pu.z % COMBINEDWIDTH == 0);
+	powerList[power_up_count - 1] = pu;
+	placePowerUp(pu);
 }
 
 void updatePowerUps()
@@ -183,6 +193,10 @@ void updatePowerUps()
 					break;
 				case rain:
 					rainEffect();
+					break;
+				case key:
+					playerHasKey = 1;
+					printf("got key\n");
 					break;
 			}
 

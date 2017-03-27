@@ -18,8 +18,8 @@ graphics: graphics.c
 projectiles: projectiles.c graphics.h, mobs.h
 	gcc -c projectiles.c graphics.h mobs.h $(INCLUDES)
 
-map: map.c graphics.h projectiles.h
-	gcc -c map.c graphics.h projectiles.h mobs.h $(INCLUDES)
+map: map.c graphics.h projectiles.h powerUps.h
+	gcc -c map.c graphics.h projectiles.h mobs.h powerUps.h $(INCLUDES)
 
 mobs: mobs.c
 	gcc -c mobs.c $(INCLUDES)

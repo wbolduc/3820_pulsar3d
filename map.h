@@ -12,13 +12,15 @@
 static float playerColor[]	= {1.0,  1.0, 1.0, 1.0};
 static float bulletColor[] = {0.5,	0.5, 0.5, 1.0};
 static float outWall[]		= {1.0,  0.0, 0.0, 1.0};
-static float worldFloor[] 	= {0.0,  1.0, 0.0, .5};
+static float worldFloor[] 	= {0.0,  1.0, 0.0, .25};
 static float inWall[]		= {1.0, 0.64, 0.0, 1.0};
 static float pillar[]		= {0.0,  0.0, 0.0, 1.0};
 
 static float red[]   	= {1.0, 0.0, 0.0, 1.0};
 static float yellow[]   = {1.0, 1.0, 0.0, 1.0};
-
+static float green[] 	= {0.0, 1.0, 0.0, 1.0};
+static float blue[]		= {0.0, 0.0, 1.0, 1.0};
+static float white[]		= {1.0, 1.0, 1.0, 1.0};
 
 
 void drawMap(int x, int y, int size);

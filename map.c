@@ -1,5 +1,6 @@
 #include "map.h"
 #include "mobs.h"
+#include "powerUps.h"
 extern void  draw2Dline(int, int, int, int, int);
 extern void  draw2Dbox(int, int, int, int);
 extern void  draw2Dtriangle(int, int, int, int, int, int);
@@ -41,6 +42,10 @@ void drawvMobOnMap(int m, int mapx, int mapy, int size)
 			}*/
 }
 
+void drawPixel(int sx, int sy, int pixelSize, int x, int y)
+{
+	fixedDraw2Dbox(sx + (x * pixelSize), sy + (y * pixelSize), sx + pixelSize + (x * pixelSize), sy + pixelSize + (y * pixelSize));
+}
 
 void drawMap(int x, int y, int size)
 {
@@ -50,6 +55,27 @@ void drawMap(int x, int y, int size)
 	float px,py, pz;
 	//float angle;
 	int pixelSize = size / TOTALGRIDSIZE;
+
+	//draw powerUps (also keys because they are powerUps)
+	for (i = 0; i < power_up_count; i++)
+	{
+		switch(powerList[i].powerType)
+		{
+			case teleport:
+				set2Dcolour(red);
+				break;
+			case bounce:
+				set2Dcolour(green);
+				break;
+			case rain:
+				set2Dcolour(blue);
+				break;
+			case key:
+				set2Dcolour(white);
+				break;
+			}
+		drawPixel(x, y, pixelSize, (int)powerList[i].x, (int)powerList[i].z);
+	}
 
 	//drawMobs
 	for (i = 0; i < MOBCOUNT; i++)
